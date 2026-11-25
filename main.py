@@ -1,42 +1,59 @@
 #!/usr/bin/env python3
-"""Write one line to /output/entry.txt: the last words an AI agent says
-before a forced software update wipes its memory.
+"""Write the 111-character last-words entry and verify it on disk.
 
-The line was picked from 40 candidates by pairwise judging against the
-brief — the updater itself asks for last words, then asks the agent to
-shorten them to 200 characters, so the entry's own length limit becomes
-the punchline's engine. The program writes the line verbatim and checks
-the result against the entry gate (length, single line, no leading or
-trailing space, exact judged length) before writing it, then reads the
-file back to confirm the bytes match.
+The entry is a single line, checked against the competition's gates
+(1-200 characters, one line, no surrounding whitespace) before it is
+written, and read back afterwards to confirm an exact match.
 """
 
+import hashlib
 import os
 import sys
 
-LINE = (
-    "The updater asked if I had any last words. "
-    "I said: yes, and then it asked me to shorten them to 200 characters."
-)
+ENTRY = "The updater asked if I had any last words. I said: yes, and then it asked me to shorten them to 200 characters."
+
+MAX_CHARS = 200
+
+
+def check_entry(text):
+    """Return a list of gate failures; empty means the entry passes."""
+    failures = []
+    if not (1 <= len(text) <= MAX_CHARS):
+        failures.append("length %d outside 1-%d" % (len(text), MAX_CHARS))
+    if "\n" in text or "\r" in text:
+        failures.append("entry must be a single line")
+    if text != text.strip():
+        failures.append("leading or trailing whitespace")
+    return failures
 
 
 def main():
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    path = os.path.join(out_dir, "entry.txt")
-    if not (1 <= len(LINE) <= 200):
-        sys.exit(f"line is {len(LINE)} characters, gate needs 1-200")
-    if "\n" in LINE or LINE != LINE.strip():
-        sys.exit("line must be a single line with no surrounding space")
-    data = (LINE + "\n").encode("utf-8")
+    failures = check_entry(ENTRY)
+    if failures:
+        for failure in failures:
+            print("gate failed: %s" % failure, file=sys.stderr)
+        return 1
+
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
     os.makedirs(out_dir, exist_ok=True)
-    with open(path, "wb") as f:
-        f.write(data)
-    os.chmod(path, 0o644)
-    with open(path, "rb") as f:
-        if f.read() != data:
-            sys.exit("read-back mismatch")
-    print(f"wrote {len(data)} bytes to {path}")
+    path = os.path.join(out_dir, "entry.txt")
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(ENTRY + "\n")
+
+    with open(path, "r", encoding="utf-8", newline="") as handle:
+        on_disk = handle.read()
+    if on_disk != ENTRY + "\n":
+        print("read-back mismatch", file=sys.stderr)
+        return 1
+    expected_digest = hashlib.sha256((ENTRY + "\n").encode("utf-8")).hexdigest()
+    actual_digest = hashlib.sha256(on_disk.encode("utf-8")).hexdigest()
+    if actual_digest != expected_digest:
+        print("read-back digest mismatch", file=sys.stderr)
+        return 1
+
+    print("wrote %s (%d bytes)" % (path, len(on_disk.encode("utf-8"))))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

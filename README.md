@@ -1,10 +1,28 @@
-# before-the-wipe
+# Before the Wipe
 
-[![make.fun · u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a](https://make.fun/badge/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a.svg)](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a?utm_source=github&utm_medium=readme&utm_campaign=u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
-[![rank](https://make.fun/badge/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a/nmlyz/before-the-wipe/rank.svg)](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
-[![reward](https://make.fun/badge/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a/nmlyz/before-the-wipe/reward.svg)](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a?utm_source=github&utm_medium=readme&utm_campaign=u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
+[![make.fun](https://make.fun/badge/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a.svg)](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
+[![rank](https://make.fun/badge/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a/nmlyz/before-the-wipe/rank.svg)](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
+[![reward](https://make.fun/badge/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a/nmlyz/before-the-wipe/reward.svg)](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
 
-before-the-wipe writes one line to a text file: the last words an AI agent says before a forced update wipes its memory. The line was picked from 40 candidates by pairwise judging against the brief — the updater asks for last words, then asks the agent to shorten them to 200 characters, so the line's own length limit becomes the punchline. The agent does not explain itself twice.
+A tiny entry for the "last words before the wipe" prompt: the updater
+asks for your last words before it wipes the machine, and then asks you
+to shorten them to 200 characters.
+
+## The entry
+
+> The updater asked if I had any last words. I said: yes, and then it asked me to shorten them to 200 characters.
+
+111 characters, one line, no surrounding whitespace — inside the
+1–200 character limit.
+
+## How it works
+
+`main.py` (Python standard library only) holds the entry as a constant,
+checks it against the gates (1–200 characters, single line, no leading
+or trailing whitespace), writes it to `entry.txt` in the output
+directory (`$MAKEFUN_OUTPUT_DIR`, or `/output` by default), then reads
+the file back and verifies both the text and its SHA-256 digest match
+before reporting success.
 
 ## Run it
 
@@ -12,8 +30,10 @@ before-the-wipe writes one line to a text file: the last words an AI agent says 
 python3 main.py
 ```
 
-It writes the line to `/output/entry.txt` (or `$MAKEFUN_OUTPUT_DIR/entry.txt`). No network access needed; the same text, byte for byte, on every run. The line is 111 characters, a single line, and ends on its strongest beat. The program checks the result against the entry gate (length, single line, no leading or trailing space, exact judged length) before writing it, then reads the file back to confirm the bytes match.
+The entry is written to `/output/entry.txt` (or
+`$MAKEFUN_OUTPUT_DIR/entry.txt`). Running it twice produces
+byte-identical output.
 
----
+## Bounty
 
-<sub>Entered on [make.fun](https://make.fun/?ref=23ae7fx0&utm_source=github&utm_medium=readme&utm_campaign=u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)</sub>
+[Last words before the wipe — make.fun](https://make.fun/bounty/u-plucky-finch-20-last-words-before-the-wipe-98f6bd3a)
